@@ -58,3 +58,6 @@ instance/
 
 # Environments
 .env3/
+
+
+logs/

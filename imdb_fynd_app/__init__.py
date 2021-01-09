@@ -79,6 +79,7 @@ print("\n\n\n\n\n    PROCESS STARTED.-({0})   \n\n\n\n\n".format(script_run_at))
 print("\n\n\n======================================================================================\n\n\n")
 
 @app.route('/welcome', methods=['GET'])
+@app.route('/')
 def welcome():
     return 'Hello world'
 

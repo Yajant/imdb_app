@@ -43,7 +43,7 @@ class GenreAPI(BaseView):
             print("==Something went wrong==",str(e))
             return create_response_format(msg='CANNOT_CREATE_GENRE_CHECK_LOG')
 
-    @is_superuser
+    # @is_superuser
     def get(self):
         try:
             q = db.session.query(Genre.genre_name,Genre.status)
@@ -163,7 +163,7 @@ class GenreMovieAPI(BaseView):
             print("==Something went wrong==",str(e))
             return create_response_format(msg='CANNOT_CREATE_GENRE_CHECK_LOG')
 
-    @is_superuser
+    # @is_superuser
     def get(self):
         try:
             q = db.session.query(MovieGenre.genre_id,MovieGenre.movie_id,Movie.movie_name,

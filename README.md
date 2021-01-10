@@ -1,4 +1,4 @@
-### Created RESTful API for movies using flash- restful (something similar to IMDB).
+### Created RESTful API for movies using flask-restful (something similar to IMDB).
 
 ### There are 2 levels of access:
 - admin = who can add, remove or edit movies.

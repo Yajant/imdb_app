@@ -61,4 +61,6 @@ instance/
 
 
 logs/
+[Ll]ogs/
+**/[Ll]ogs
 backup.py

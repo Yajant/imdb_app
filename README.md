@@ -13,7 +13,7 @@
 
 It requires requirements.txt installed to run.
 
-Install the dependencies and devDependencies and start the server.
+Install the dependencies and start the server.
 
 ```sh
 $ virtualenv --python=python3 .venv

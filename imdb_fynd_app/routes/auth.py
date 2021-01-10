@@ -6,6 +6,7 @@ from imdb_fynd_app.models import User
 from imdb_fynd_app.core.imdb_decorator import token_required , is_superuser
 from helpers import create_response_format, print_exception, isValidEmail
 from imdb_fynd_app.core.views import BaseView
+from imdb_fynd_app.core.http import request_data, parse_args
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +15,23 @@ class RegisterAPI(BaseView):
     uri = '/user/register'
 
     def post(self):
-        try:            
-            email = request.values.get('email')
+        try:     
+            # get the post data
+            data = parse_args(
+                (
+                    ('email', str, True),
+                    ('password', str, True)
+                ),
+                request_data()
+            )
+                    
+            email = data.get('email')            
+            password = data.get('password')
 
             is_Valid_Email = isValidEmail(email)
             if not is_Valid_Email:
-                return create_response_format(msg="""Please enter a valid email. Valid e-mail can contain only contain latin letters, numbers, '@' and '.'. """, status=401)
-
-            password = request.values.get('password')            
-
+                return create_response_format(msg="""Please enter a valid email. Valid e-mail can contain only contain latin letters, numbers, '@' and '.'. """)
+                
             if not email:
                 return create_response_format(msg='email_IS_MANDOTRY')
             if not password:
@@ -35,20 +44,18 @@ class RegisterAPI(BaseView):
             
             new_user = User.query.filter_by(email=email).one_or_none()
             if new_user is None:                                
-                new_user = User(email=email, password=password,is_active=True)
+                new_user = User(email=email.lower(), password=password,is_active=True)
             else:
-                return create_response_format(msg='USERNAME_ALREADY_EXISTS')
+                return create_response_format(msg='USERNAME_ALREADY_EXISTS',status=409)
             db.session.add(new_user)
             db.session.commit()
 
-            # generate the auth token
+            ## generate the auth token
             auth_token = new_user.encode_auth_token(new_user.id)                
-            logger.info(auth_token)
-            # print(auth_token)
-
-            # auth_token = auth_token.decode()
+            logger.info(str(auth_token))
+                        
             data = {'auth_token': auth_token}
-            
+                        
             return create_response_format(msg='User Registed Successfully',data=data,is_valid=True,status=201)
 
         except Exception as e:
@@ -61,8 +68,16 @@ class LoginAPI(BaseView):
     
     def post(self):
         try:
-            email = request.values.get('email')
-            password = request.values.get('password')
+            data = parse_args(
+                (
+                    ('email', str, True),
+                    ('password', str, True)
+                ),
+                request_data()
+            )
+                    
+            email = data.get('email')            
+            password = data.get('password')
 
             if not email:
                 return create_response_format(msg='email_IS_MANDOTRY')
@@ -77,6 +92,7 @@ class LoginAPI(BaseView):
             #authenticate password            
             if user and user.check_password(password):
                 auth_token = user.encode_auth_token(user.id)
+                print(auth_token, " - auth_token")
                 if auth_token:                                                                            
                     # data = {'auth_token': auth_token.decode()}
                     data = {'auth_token': auth_token}
@@ -86,7 +102,7 @@ class LoginAPI(BaseView):
                     print("\nLogged in user: '{0}'".format(user.email))
                     print("\n---------------------------------------------------------------------------\n")
 
-                    return create_response_format(msg='Successfully logged in.',data=data, status=200, is_valid=True)     
+                    return create_response_format(msg='Successfully logged in',data=data, status=200, is_valid=True)     
             else:                
                 return create_response_format(msg='Login Unsuccessful. Please check email and password.', status=401)     
 
@@ -99,27 +115,25 @@ class LogoutAPI(BaseView):
     uri = '/user/logout'
 
     @token_required
-    def post(self):
-        if request.method == 'POST':                     
-            auth_header = request.headers.get('Authorization')
+    def post(self):   
+        current_user = self.current_user                      
+        auth_header = request.headers.get('Authorization')
 
-            if auth_header:
-                auth_token = auth_header.split(" ")[1]
-            else:
-                auth_token = ''
-
-            if auth_token and current_user.id:                                        
-                try:                
-                    # insert the token                
-                    current_user.auth_token = auth_token
-                    db.session.commit()
-                                    
-                    logger.info("Successfully logged out. -'{0}'".format(current_user.email))
-                    return create_response_format(msg='Successfully logged out.', status=200,is_valid=True)                
-                except Exception as e:
-                    logger.error(e)
-                    return create_response_format(exception=True,status=200)            
-            else:                    
-                return create_response_format(msg='Provide a valid auth token.',status=403)
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
         else:
-            return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')
+            auth_token = ''
+
+        if auth_token and current_user.id:                                        
+            try:                
+                # insert the token                
+                current_user.auth_token = auth_token
+                db.session.commit()
+                                
+                logger.info("Successfully logged out. -'{0}'".format(current_user.email))
+                return create_response_format(msg='Successfully logged out.', status=200,is_valid=True)                
+            except Exception as e:
+                logger.error(e)
+                return create_response_format(exception=True,status=200)            
+        else:                    
+            return create_response_format(msg='Provide a valid auth token.',status=403)        

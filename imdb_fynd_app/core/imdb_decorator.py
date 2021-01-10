@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def token_required(f):
     @wraps(f)
-    def decorator(*args, **kwargs):            
+    def decorator(self,*args, **kwargs):            
         auth_header = request.headers.get('Authorization')    
         if auth_header:
             try:
@@ -23,7 +23,6 @@ def token_required(f):
         if auth_token:
             token_status, resp = User.decode_auth_token(auth_token)  
 
-            print(token_status, resp, " - token_status, respv")    
             if token_status:
                 try:
                     current_user = User.query.get(resp)  
@@ -39,13 +38,14 @@ def token_required(f):
 
                 if not current_user.is_active:
                     return create_response_format(msg='Please activate your account first.', status=401)  
-                                                              
+                
+                self.current_user = current_user                                    
             else:
                 return create_response_format(msg=resp, status=401)                    
         else:
             return create_response_format(msg="Provide a valid auth token.", status=401)                
 
-        return f(current_user,*args, **kwargs)
+        return f(self,*args, **kwargs)
     
     return decorator
 
@@ -84,7 +84,8 @@ def is_superuser(f):
                 if not current_user.is_active:
                     return create_response_format(msg='Please activate your account first.', status=401)  
                 
-                return f(current_user,*args, **kwargs)                
+                self.current_user = current_user  
+                return f(self,*args, **kwargs)                
             else:
                 return create_response_format(msg=resp, status=401)                    
         else:

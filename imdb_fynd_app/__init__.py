@@ -18,6 +18,9 @@ db.init_app(app)
 app.cli.add_command(create_tables)
 app.cli.add_command(create_superuser)
 
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///IMDB.sqlite3"
+# app.config["SECRET_KEY"]  = "ldfjsolasfuasdfjsodfusoij4w09r8pswojufsldkfjdf9"
+
 # ---------------------
 # CUSTOM ERROR HANDLERS
 # Registering an Error Handler
@@ -70,38 +73,27 @@ print("\n\n\n===================================================================
 print("\n\n\n\n\n    PROCESS STARTED.-({0})   \n\n\n\n\n".format(script_run_at))
 print("\n\n\n======================================================================================\n\n\n")
 
+from helpers import create_response_format
 @app.route('/welcome', methods=['GET'])
 @app.route('/')
 def welcome():
-    return "Let's Begin"
+    msg = "Let's Begin"
+    return create_response_format(msg=msg,status=200,is_valid=True)
 
-from imdb_fynd_app.routes.movies import Movies
-from imdb_fynd_app.routes.genre import Genre, GenreMovie
+from imdb_fynd_app.routes.auth import RegisterAPI, LoginAPI, LogoutAPI
+from imdb_fynd_app.routes.movies import MoviesAPI
+from imdb_fynd_app.routes.genre import GenreAPI, GenreMovieAPI
 from flask_restful import Api
 
 api = Api(app, prefix='/api')
 resources = [
     # AUTH_APIS
+    RegisterAPI, LoginAPI, LogoutAPI,
     
     # MOVIE_APIS        
-    Movies,Genre, GenreMovie,
+    MoviesAPI,GenreAPI, GenreMovieAPI,
 ]
 
 for resource in resources:
     api.add_resource(resource, resource.uri)
-
-
-
-# Initialize app
-# db.init_app(app)
-
-# Initialize login manager
-# login_manager.init_app(app)    
-# login_manager.login_view = 'auth.login'
-# login_manager.login_message_category = 'info'
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.query.get(int(user_id))
-
 

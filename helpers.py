@@ -14,7 +14,7 @@ def isValidEmail(email):
         return True
     return False
  
-def create_response_format(msg='something went wrong',data={},status=200,is_valid=False,headers={},permission_status=None,return_context=False,**kwargs):
+def create_response_format(msg='something went wrong',data={},status=400,is_valid=False,headers={},permission_status=None,return_context=False,**kwargs):
     context = {}
              
     context['is_valid'] = is_valid 

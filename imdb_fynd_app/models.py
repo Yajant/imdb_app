@@ -5,8 +5,8 @@ from datetime import datetime, date, timedelta
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import event
-from sqlalchemy import Column, DateTime, Integer, String, text,Float,Boolean
-
+from sqlalchemy import Column, DateTime, Integer, String, Text,Float,Boolean
+from helpers import print_exception
 # --------------
 # User
 # --------------
@@ -51,12 +51,15 @@ class User(db.Model, UserMixin):
                 'iat': datetime.utcnow(),              
                 'sub': user_id
             }
-            return jwt.encode(
+            
+            encoded_auth_token = jwt.encode(
                 payload,                
                 getattr(settings, "SECRET_KEY",""),
                 algorithm='HS256'
             )
-        except Exception as e:            
+            return encoded_auth_token
+        except Exception as e:                   
+            print_exception(e)
             return e
 
     @staticmethod
@@ -108,8 +111,8 @@ class Movie(db.Model):
     director_name = Column(String(50))
     imdb_score = Column(Float)
     popularity = Column(Float,name='99popularity')
-    created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+    created_date = Column(DateTime, nullable=False, default=datetime.now())
+    updated_date = Column(DateTime, nullable=False, default=datetime.now())    
     status = Column(String(1), default='A')
     
 
@@ -117,9 +120,9 @@ class Genre(db.Model):
     __tablename__ = 'genre'
 
     id = Column(Integer, primary_key=True)
-    genre_name = Column(String(100))
-    created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+    genre_name = Column(String(100))    
+    created_date = Column(DateTime, nullable=False, default=datetime.now())
+    updated_date = Column(DateTime, nullable=False, default=datetime.now())    
     status = Column(String(1), name='status', default='A')
 
 
@@ -129,6 +132,6 @@ class MovieGenre(db.Model):
     id = Column(Integer, primary_key=True)
     movie_id = Column(Integer,db.ForeignKey('movie.id'))
     genre_id = Column(Integer,db.ForeignKey('genre.id'))
-    created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
-    updated_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+    created_date = Column(DateTime, nullable=False, default=datetime.now())
+    updated_date = Column(DateTime, nullable=False, default=datetime.now())    
     status = Column(String(1), default='A')

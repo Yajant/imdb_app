@@ -134,7 +134,7 @@ def crossdomain(origin=None, methods=None, headers=None, max_age=21600):
                 h['Content-Type'] = 'application/json'
             h['Access-Control-Allow-Origin'] = origin
             h['Access-Control-Allow-Methods'] = methods
-            h['Access-Control-Allow-Headers'] = "Access-Control-Allow-Headers,  Permission-Code , Authorization, Access-Control-Allow-Origin, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+            h['Access-Control-Allow-Headers'] = "Access-Control-Allow-Headers, Authorization, Access-Control-Allow-Origin, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
 
             # h['Access-Control-Max-Age'] = str(max_age)
             if headers is not None:

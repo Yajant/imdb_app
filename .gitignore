@@ -59,8 +59,9 @@ instance/
 # Environments
 .env3/
 
-
+# Logs
 logs/
+# Ignore all directories called either Logs or logs anywhere in the directory tree
 [Ll]ogs/
 **/[Ll]ogs
 backup.py

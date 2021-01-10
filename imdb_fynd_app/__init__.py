@@ -73,7 +73,7 @@ print("\n\n\n===================================================================
 @app.route('/welcome', methods=['GET'])
 @app.route('/')
 def welcome():
-    return 'Hello world'
+    return "Let's Begin"
 
 from imdb_fynd_app.routes.movies import Movies
 from imdb_fynd_app.routes.genre import Genre, GenreMovie

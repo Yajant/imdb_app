@@ -31,8 +31,7 @@ def token_required(f):
                     print("\n---------------------------------------------------------------------------\n")
                     print("Request coming from user: '{0}'".format(current_user.email))
                     print("\n---------------------------------------------------------------------------\n")              
-                except Exception as e:
-                    print(e,"######################")
+                except Exception as e:                    
                     current_user = None
                                 
                 if not current_user:                
@@ -68,7 +67,7 @@ def is_superuser(f):
             token_status, resp = User.decode_auth_token(auth_token)      
             if token_status:
                 try:
-                    current_user = User.query.get(id=resp)  
+                    current_user = User.query.get(resp)  
 
                     print("\n---------------------------------------------------------------------------\n")
                     print("Request coming from: '{0}'".format(current_user.email))

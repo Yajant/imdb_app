@@ -11,18 +11,18 @@ from imdb_fynd_app.models import User, Genre,MovieGenre,Movie
 
 from imdb_fynd_app.core.imdb_decorator import token_required , is_superuser
 from helpers import create_response_format, print_exception, isValidEmail
+from imdb_fynd_app.core.views import BaseView
 
-##GENRE
-genre_blueprint= Blueprint('genre', __name__)
+# ---------------
+# GENRE
+# ---------------
 
-@genre_blueprint.route('/genre',methods=['GET', 'POST','PUT','DELETE'])
-def genre():
-    # call the service for the authenitcation
-    session_id = request.values.get('session_id')
-    if not session_id:
-        return create_response_format(msg='PLS_PROVIDE_SESSION_FOR_AUTHICATION')
-    
-    if request.method == 'POST': 
+class Genre(BaseView): 
+
+    uri = '/genre'
+
+    @is_superuser
+    def post(self):
         try:
             genre_name = request.values.get('genre_name')
             if not genre_name:
@@ -33,20 +33,24 @@ def genre():
             db.session.commit()
             return create_response_format(is_valid=True,msg='Genre Inserted Successfully!')
         except Exception as e:
+            print_exception(e)
             print("==Something went wrong==",str(e))
             return create_response_format(msg='CANNOT_CREATE_GENRE_CHECK_LOG')
 
-    elif request.method == 'GET':
+    @is_superuser
+    def get(self):
         try:
             q = db.session.query(Genre.genre_name,Genre.status)
             q = q.filter(Genre.status == 'A')
             result_set = [u._asdict() for u in q.all()]
             return create_response_format(is_valid=True,data=result_set)
         except Exception as e:
+            print_exception(e)
             print("==Something went wrong in getting all detials for Genre==",str(e))
             return create_response_format(msg='CANNOT_FETCH_DATA_FOR_GENRE')
 
-    elif request.method == 'PUT':
+    @is_superuser
+    def put(self):
         try:
             # to update we need genre id
             genre_name = request.values.get('genre_name')
@@ -71,10 +75,12 @@ def genre():
 
             return create_response_format(is_valid=True,msg='Genre Updated Successfully!')
         except Exception as e:
+            print_exception(e)
             print("==Something went wrong in getting all detials for genre==",str(e))
             return create_response_format(msg='CANNOT_UPDATING_DATA_FOR_GENRE')
 
-    elif request.method == 'DELETE':
+    @is_superuser
+    def delete(self):
         try:
             # to DELETE we need genre_id
             # we will do soft delete
@@ -99,26 +105,25 @@ def genre():
 
             return create_response_format(is_valid=True,msg='Genre Deleted Successfully!')
         except Exception as e:
+            print_exception(e)
             print("==Something went wrong in getting all detials for genre==",str(e))
-            return create_response_format(msg='CANNOT_DELETING_DATA_FOR_GENRE')
-    else:
-        return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')
+            return create_response_format(msg='CANNOT_DELETE_DATA_FOR_GENRE')
 
 
-@genre_blueprint.route('/genre_movie',methods=['GET', 'POST','PUT','DELETE'])
-def genre_movie():
-    session_id = request.values.get('session_id')
-    if not session_id:
-        create_response_format(msg='PLS_PROVIDE_SESSION_FOR_AUTHICATION')
+# ---------------
+# GENRE MOVIE
+# ---------------
+
+class GenreMovie(BaseView):    
+    uri = '/genre_movie'
     
-    if request.method == 'POST': 
+    @is_superuser
+    def post(self):
         try:
-
             movie_id = request.values.get('movie_id')
             genre_id = request.values.get('genre_id')
             if not genre_id or not movie_id:
                 return create_response_format(msg='PLS_PROVIDE_GENRE_NAME_MOVIE_NAME')
-
             
             q = MovieGenre(genre_id=genre_id,movie_id=movie_id,status='A'
                         )
@@ -126,10 +131,12 @@ def genre_movie():
             db.session.commit()
             return create_response_format(is_valid=True,msg='Genre for movie Inserted Successfully!')
         except Exception as e:
+            print_exception(e)
             print("==Something went wrong==",str(e))
             return create_response_format(msg='CANNOT_CREATE_GENRE_CHECK_LOG')
 
-    elif request.method == 'GET':
+    @is_superuser
+    def get(self):
         try:
             q = db.session.query(MovieGenre.genre_id,MovieGenre.movie_id,Movie.movie_name,
                 Genre.genre_name
@@ -140,10 +147,12 @@ def genre_movie():
             result_set = [u._asdict() for u in q.all()]
             return create_response_format(is_valid=True,data=result_set)
         except Exception as e:
+            print_exception(e)
             print("==Something went wrong in getting all detials for Genre Movie==",str(e))
             return create_response_format(msg='CANNOT_FETCH_DATA_FOR_GENRE')
 
-    elif request.method == 'PUT':
+    @is_superuser
+    def put(self):
         try:
             # to update we need genre id
             movie_id = request.values.get('movie_id')
@@ -173,8 +182,8 @@ def genre_movie():
             print("==Something went wrong in getting all detials for genre==",str(e))
             return create_response_format(msg='CANNOT_UPDATING_DATA_FOR_GENRE_MOVIE')
 
-
-    elif request.method == 'DELETE':
+    @is_superuser
+    def delete(self):
         try:
             # to DELETE we need moviegenre_id
             # we will do soft delete
@@ -201,5 +210,3 @@ def genre_movie():
         except Exception as e:
             print("==Something went wrong in getting all detials for genre==",str(e))
             return create_response_format(msg='CANNOT_DELETING_DATA_FOR_GENRE_MOVIE')
-    else:
-        return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')

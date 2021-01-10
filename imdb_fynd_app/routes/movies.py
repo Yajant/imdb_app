@@ -11,14 +11,16 @@ from imdb_fynd_app.models import User, Genre,MovieGenre,Movie
 from imdb_fynd_app.core.imdb_decorator import token_required , is_superuser
 from helpers import create_response_format, print_exception
 from imdb_fynd_app.core.views import BaseView
-# movie_blueprint = Blueprint('movies', __name__)
 
-# # #MOVIE
+# movie_blueprint = Blueprint('movies', __name__)
 # @movie_blueprint.route('/api/movies',methods=['GET', 'POST','PUT','DELETE'])
 
+##MOVIE
 class Movies(BaseView): 
 
     uri = '/movies'
+
+    @is_superuser
     def post(self):
         try:            
             movie_name = request.values.get('movie_name')
@@ -43,6 +45,7 @@ class Movies(BaseView):
             print("==Something went wrong==",str(e))
             return create_response_format(msg='CANNOT_CREATE_GENRE_CHECK_LOG')
 
+    @is_superuser
     def get(self):
         try:
             movie_name = request.values.get('movie_name')
@@ -83,8 +86,9 @@ class Movies(BaseView):
             print_exception(e)
             print("==Something went wrong in getting all detials for Genre==",str(e))
             return create_response_format(msg='CANNOT_FETCH_DATA_FOR_MOVIE')
-
+    
     def put(self):
+        '''Everyone has view and search access, don't restrict search api access'''
         try:            
             # to update we need genre id
             movie_name = request.values.get('movie_name')
@@ -127,7 +131,7 @@ class Movies(BaseView):
             print("==Something went wrong in getting all detials for genre==",str(e))
             return create_response_format(msg='CANNOT_UPDATING_DATA_FOR_GENRE')
 
-
+    @is_superuser
     def delete(self):
         try:                        
             # to DELETE we need movie_id

@@ -24,10 +24,10 @@ class BaseView(Resource):
         try:
             return super().dispatch_request(*args, **kwargs)
         except Exception as e:
-            log.info('{0} was sent {1} which raised a DataIntegrityError : {2}'.format(request.base_url, self.request_data, str(e)))
+            log.info('{0} was sent {1} which raised a Error : {2}'.format(request.base_url, self.request_data, str(e)))
             error_location = '{0} {1}'.format(request.path, request.method.upper())
             log.info(error_location)
-            return create_response_format(msg="Invalid Request",status=400)            
+            return create_response_format(msg="Invalid Request")            
 
     def options(self, **kwargs):        
         return Response(status=200)

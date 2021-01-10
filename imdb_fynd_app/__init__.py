@@ -2,9 +2,6 @@ import os, logging
 from flask import Flask, request, jsonify, make_response
 from .commands import create_tables, create_superuser
 from .extensions import db, login_manager
-from imdb_fynd_app.routes.auth import auth_blueprint
-# from imdb_fynd_app.routes.movies import movie_blueprint
-from imdb_fynd_app.routes.genre import genre_blueprint
 from flask_cors import CORS
 
 app = Flask(__name__,static_folder='static',template_folder='templates')
@@ -15,11 +12,6 @@ app.config.from_pyfile('settings.py')
 
 # Initialize sqllachemy/ register sqlalchemy extension in application
 db.init_app(app)
-
-# Register blueprints(apps)
-app.register_blueprint(auth_blueprint)
-# app.register_blueprint(movie_blueprint)
-app.register_blueprint(genre_blueprint)
 
 # Register cli command to create all tables
 # Usage - flask run - flask create_tables
@@ -58,7 +50,7 @@ if not os.path.exists(log_path):
 logging.basicConfig( 
     filename=os.path.join(log_path, 'logs.txt'),
     level=logging.INFO, 
-    format='[%(asctime)s] {%(pathname)s:%(lineno)d}%(levelname)s- %(message)s', 
+    format='[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s- %(message)s', 
     datefmt='%H:%M:%S'
 ) 
 # set up logging to console 
@@ -66,7 +58,7 @@ console = logging.StreamHandler()
 console.setLevel(logging.DEBUG) 
 # set a format which is simpler for console use 
 # formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-formatter = logging.Formatter('[%(asctime)s]{%(name)s:%(lineno)d} %(levelname)s- %(message)s')
+formatter = logging.Formatter('[%(asctime)s] {%(name)s:%(lineno)d} %(levelname)s- %(message)s')
 console.setFormatter(formatter) 
 # add the handler to the root logger 
 logging.getLogger('').addHandler(console) 
@@ -84,13 +76,15 @@ def welcome():
     return 'Hello world'
 
 from imdb_fynd_app.routes.movies import Movies
+from imdb_fynd_app.routes.genre import Genre, GenreMovie
 from flask_restful import Api
+
 api = Api(app, prefix='/api')
 resources = [
     # AUTH_APIS
     
     # MOVIE_APIS        
-    Movies,
+    Movies,Genre, GenreMovie,
 ]
 
 for resource in resources:

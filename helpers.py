@@ -18,8 +18,8 @@ def create_response_format(msg='something went wrong',data={},status=200,is_vali
     context = {}
              
     context['is_valid'] = is_valid 
-    if data:
-        context['data'] = data     
+    # if data:
+    context['data'] = data     
     if headers:
         context['headers'] = headers                    
     if msg:

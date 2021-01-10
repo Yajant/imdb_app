@@ -7,6 +7,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import event
 from sqlalchemy import Column, DateTime, Integer, String, text,Float,Boolean
 
+# --------------
+# User
+# --------------
+
 # class Role(db.Model, RoleMixin):
 #     id = db.Column(db.Integer(), primary_key=True)
 #     name = db.Column(db.String(80), unique=True)
@@ -39,8 +43,7 @@ class User(db.Model, UserMixin):
         Generates the Auth Token
         :return: string
         """        
-        try:                
-            # exp = datetime.datetime.utcnow() + datetime.timedelta(days=1)
+        try:                            
             exp = datetime.utcnow() + timedelta(days=1)
             
             payload = {
@@ -53,8 +56,7 @@ class User(db.Model, UserMixin):
                 getattr(settings, "SECRET_KEY",""),
                 algorithm='HS256'
             )
-        except Exception as e:
-            print(e," #############")
+        except Exception as e:            
             return e
 
     @staticmethod
@@ -62,7 +64,7 @@ class User(db.Model, UserMixin):
         """
         Validates the auth token
         :param auth_token:
-        :return: integer|string
+        :return: bool, integer|string
         """                    
         try: 
             payload = jwt.decode(auth_token, getattr(settings, "SECRET_KEY", ""),algorithms=['HS256'])                 
@@ -94,6 +96,7 @@ def hash_user_password(target, value, oldvalue, initiator):
     if value != oldvalue:
         return generate_password_hash(value)
     return value
+
 # --------------
 # Movies
 # --------------
@@ -101,8 +104,8 @@ class Movie(db.Model):
     __tablename__ = 'movie'
 
     id = Column(Integer, primary_key=True)
-    movie_name = Column(String(12))
-    director_name = Column(String(12))
+    movie_name = Column(String(100))
+    director_name = Column(String(50))
     imdb_score = Column(Float)
     popularity = Column(Float,name='99popularity')
     created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
@@ -114,7 +117,7 @@ class Genre(db.Model):
     __tablename__ = 'genre'
 
     id = Column(Integer, primary_key=True)
-    genre_name = Column(String(10))
+    genre_name = Column(String(100))
     created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     status = Column(String(1), name='status', default='A')

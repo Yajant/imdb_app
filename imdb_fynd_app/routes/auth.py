@@ -5,13 +5,15 @@ from imdb_fynd_app.extensions import db
 from imdb_fynd_app.models import User
 from imdb_fynd_app.core.imdb_decorator import token_required , is_superuser
 from helpers import create_response_format, print_exception, isValidEmail
+from imdb_fynd_app.core.views import BaseView
 
 logger = logging.getLogger(__name__)
-auth_blueprint = Blueprint('auth', __name__)
 
-@auth_blueprint.route('/api/user/register',methods=['POST'])
-def user_register():
-    if request.method == 'POST': 
+class RegisterAPI(BaseView): 
+
+    uri = '/user/register'
+
+    def post(self):
         try:            
             email = request.values.get('email')
 
@@ -52,13 +54,12 @@ def user_register():
         except Exception as e:
             print_exception(e)
             return create_response_format(msg='SOMETHING_WENT_WRONG_IN_REGISTERING_USER')
+    
+class LoginAPI(BaseView): 
 
-    else:
-        return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')
-
-@auth_blueprint.route('/api/user/login',methods=['POST'])
-def user_login():
-    if request.method == 'POST': 
+    uri = '/user/login'
+    
+    def post(self):
         try:
             email = request.values.get('email')
             password = request.values.get('password')
@@ -93,32 +94,32 @@ def user_login():
             print_exception(e)
             return create_response_format(msg='SOMETHING_WENT_WRONG_IN_LOGGING_USER')
 
-    else:
-        return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')
+class LogoutAPI(BaseView): 
 
-@auth_blueprint.route('/api/user/logout',methods=['POST'])
-@token_required
-def user_logout(current_user):
-    if request.method == 'POST':                     
-        auth_header = request.headers.get('Authorization')
+    uri = '/user/logout'
 
-        if auth_header:
-            auth_token = auth_header.split(" ")[1]
+    @token_required
+    def post(self):
+        if request.method == 'POST':                     
+            auth_header = request.headers.get('Authorization')
+
+            if auth_header:
+                auth_token = auth_header.split(" ")[1]
+            else:
+                auth_token = ''
+
+            if auth_token and current_user.id:                                        
+                try:                
+                    # insert the token                
+                    current_user.auth_token = auth_token
+                    db.session.commit()
+                                    
+                    logger.info("Successfully logged out. -'{0}'".format(current_user.email))
+                    return create_response_format(msg='Successfully logged out.', status=200,is_valid=True)                
+                except Exception as e:
+                    logger.error(e)
+                    return create_response_format(exception=True,status=200)            
+            else:                    
+                return create_response_format(msg='Provide a valid auth token.',status=403)
         else:
-            auth_token = ''
-
-        if auth_token and current_user.id:                                        
-            try:                
-                # insert the token                
-                current_user.auth_token = auth_token
-                db.session.commit()
-                                
-                logger.info("Successfully logged out. -'{0}'".format(current_user.email))
-                return create_response_format(msg='Successfully logged out.', status=200,is_valid=True)                
-            except Exception as e:
-                logger.error(e)
-                return create_response_format(exception=True,status=200)            
-        else:                    
-            return create_response_format(msg='Provide a valid auth token.',status=403)
-    else:
-        return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')
+            return create_response_format(msg='UNAUTHORISED_METHOD_FOR_ACCESS')

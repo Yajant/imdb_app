@@ -11,6 +11,7 @@ It requires requirements.txt installed to run.
 Install the dependencies and start the server.
 
 ```sh
+$ cd imdb_fynd_app
 $ virtualenv --python=python3 .venv
 $ source .venv/bin/activate
 $ pip install -r requirements.txt

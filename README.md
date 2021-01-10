@@ -4,13 +4,6 @@
 - admin = who can add, remove or edit movies.
 - users = who can just view the movies.
 
-### Test Cases Included for all routes
-```sh
-$ python -m unittest /tests/test_auth.py
-$ python -m unittest /tests/test_movie.py
-$ python -m unittest /tests/test_genre.py
-```
-
 ### Installation
 
 It requires requirements.txt installed to run.
@@ -25,4 +18,10 @@ $ flask create_superuser
 $ flask run or python app.py
 ```
 
+### Test Cases Included for all routes
+```sh
+$ python -m unittest /tests/test_auth.py
+$ python -m unittest /tests/test_movie.py
+$ python -m unittest /tests/test_genre.py
+```
 

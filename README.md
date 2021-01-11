@@ -26,3 +26,11 @@ $ python -m unittest /tests/test_movie.py
 $ python -m unittest /tests/test_genre.py
 ```
 
+### Custom Commands
+```sh
+$ flask create_tables
+$ flask create_superuser
+```
+
+
+

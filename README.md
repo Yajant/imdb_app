@@ -11,7 +11,7 @@ It requires requirements.txt installed to run.
 Install the dependencies and start the server.
 
 ```sh
-$ cd imdb_fynd_app
+$ cd imdb_app
 $ virtualenv --python=python3 .venv
 $ source .venv/bin/activate
 $ pip install -r requirements.txt
@@ -21,9 +21,9 @@ $ flask run or python app.py
 
 ### Test Cases Included for all routes
 ```sh
-$ python -m unittest /tests/test_auth.py
-$ python -m unittest /tests/test_movie.py
-$ python -m unittest /tests/test_genre.py
+$ python -m unittest /imdb_fynd_app/tests/test_auth.py
+$ python -m unittest /imdb_fynd_app/tests/test_movie.py
+$ python -m unittest /imdb_fynd_app/tests/test_genre.py
 ```
 
 ### Custom Commands

@@ -4,6 +4,8 @@
 - admin = who can add, remove or edit movies.
 - users = who can just view the movies.
 
+### All routes are secured with JWT Token Autentication
+
 ### Installation
 
 It requires requirements.txt installed to run.

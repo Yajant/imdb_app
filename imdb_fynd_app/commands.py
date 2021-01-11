@@ -15,14 +15,17 @@ def create_tables():
 @click.command(name='create_superuser')
 @with_appcontext
 def create_superuser(username,email,password):
-    # usage- https://pymbook.readthedocs.io/en/latest/click.html
-    # flask create_superuser -e yajant@mailinator.com -u iamyajant -p admin
-    # or
-    # flask create_superuser
-    
-    db.create_all()
-    # Only needed on first execution to create first user       
-    super_user = User(username=username,email=email, password=password, is_superuser=True, is_active=True) 
-    # super_user = User(username='admin',email='admin@mailinator.com', password='download123', superuser=True)  
-    db.session.add(super_user)
-    db.session.commit()
+    try:
+        # usage- https://pymbook.readthedocs.io/en/latest/click.html
+        # flask create_superuser -e yajant@mailinator.com -u iamyajant -p admin
+        # or
+        # flask create_superuser
+
+        db.create_all()
+        # Only needed on first execution to create first user       
+        super_user = User(username=username,email=email, password=password, is_superuser=True, is_active=True) 
+        # super_user = User(username='admin',email='admin@mailinator.com', password='download123', superuser=True)  
+        db.session.add(super_user)
+        db.session.commit()
+     except:
+        pass

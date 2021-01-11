@@ -1,8 +1,10 @@
 ### Created RESTful API for movies using flask-restful (something similar to IMDB).
 
 ### There are 2 levels of access:
+- All routes are secured with JWT Token authentication
 - admin = who can add, remove or edit movies.
 - users = who can just view the movies.
+
 
 ### All routes are secured with JWT Token Autentication
 

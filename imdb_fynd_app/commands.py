@@ -27,5 +27,5 @@ def create_superuser(username,email,password):
         # super_user = User(username='admin',email='admin@mailinator.com', password='download123', superuser=True)  
         db.session.add(super_user)
         db.session.commit()
-     except:
+    except:
         pass

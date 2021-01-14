@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section">
+          <h4>{{description}}</h4>
+          <!-- <h4>{{description}}</h4> -->
+    </article>
+
+    <div class="content-section">
+	   {% from "_formhelpers.html" import render_field %}
+	   <form method="post">
+	      <dl>
+	         {{ render_field(form.select) }}
+	         <p>
+	            {{ render_field(form.search) }}
+	         </p>
+	      </dl>
+	      <p><input type="submit" value="Search">
+	      </p>
+	   </form>
+	</div>
+
+{% endblock content %}

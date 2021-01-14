@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+  <h1> Search Results</h1>
+  
+   {% for row in results %}
+    <tr>
+      <td>{{ row }}</td>      
+    </tr>
+    {% endfor %}
+
+
+</div>
+{% endblock content %}

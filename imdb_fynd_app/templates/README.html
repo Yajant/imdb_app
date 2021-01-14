@@ -1,0 +1,36 @@
+<h3 id="created-restful-api-for-movies-using-flask-restful-something-similar-to-imdb.">Created RESTful API for movies using flask-restful (something similar to IMDB).</h3>
+<h3 id="there-are-2-levels-of-access">There are 2 levels of access:</h3>
+<ul>
+    <li>All routes are secured with JWT Token authentication<br /></li>
+    <li>admin = who can add, remove or edit movies.<br /></li>
+    <li>users = who can just view the movies.</li>
+</ul>
+
+<h3 id="installation">Installation</h3>
+
+	<p>It requires requirements.txt installed to run.</p>
+	<p>Install the dependencies and start the server.</p>
+	<pre class="sh"><code>$ cd imdb_app
+	$ virtualenv --python=python3 .venv
+	$ source .venv/bin/activate
+	$ pip install -r requirements.txt
+	$ flask create_superuser
+	$ flask run or python app.py</code></pre>
+<h3 id="test-cases-included-for-all-routes">Test Cases Included for all routes</h3>
+
+<pre class="sh">
+	<code>
+		$ python -m unittest /imdb_fynd_app/tests/test_auth.py
+		$ python -m unittest /imdb_fynd_app/tests/test_movie.py
+		$ python -m unittest /imdb_fynd_app/tests/test_genre.py
+	</code>
+</pre>
+
+<h3 id="custom-commands">Custom Commands</h3>
+
+<pre class="sh">
+	<code>
+	$ flask create_tables
+	$ flask create_superuser
+	</code>
+</pre>

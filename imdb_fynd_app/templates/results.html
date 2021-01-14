@@ -2,13 +2,23 @@
 {% block content %}
 <div class="content-section">
   <h1> Search Results</h1>
-  
-   {% for row in results %}
-    <tr>
-      <td>{{ row }}</td>      
-    </tr>
-    {% endfor %}
 
-
+  <div class="container">
+    <div class="row" style="display: inline;">
+      <div class=".col">
+        {% for row in results %}
+            <div style="margin-bottom: 5px; background-color:white; color:gray" >
+              <div class="card-body">
+                <h5 class="card-title">{{ row.movie_name }}</h5>
+                <p class="card-text"><strong>Director Name </strong> - {{ row.director_name }}</p>
+                <p class="card-text"><strong>Imdb Score </strong>- <em>{{ row.imdb_score }}</em></p>
+                <p class="card-text"><strong>Populatiry </strong>- <em>{{ row.popularity }}</em></p>
+              </div>
+            </div>
+            <hr/>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}

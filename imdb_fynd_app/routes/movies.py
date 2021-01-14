@@ -26,70 +26,33 @@ def search_results(search):
 
     print(search.data," - search.data")
     search_text = search.data['search']
+    select_text = search.data['select']
     #this is also be search functionality
-    q = db.session.query(Movie.movie_name,Movie.director_name,Movie.imdb_score,Movie.popularity.label('99popularity'),
-        ) 
-    if search_text == '':
-        #If nothing searched display all results
-        q = q
-    else:
+    #If nothing searched display all results
+    q = db.session.query(Movie.movie_name,Movie.director_name,Movie.imdb_score,Movie.popularity,Movie.id) 
+    if search_text:
         search_text = ('%' + search_text + '%').lower()
-        q = q.filter(db.or_(func.lower(Movie.movie_name).like(search_text),
-                             func.lower(Movie.director_name).like(search_text)))
+        q = q.filter(db.or_(func.lower(Movie.movie_name).like(search_text),func.lower(Movie.director_name).like(search_text)))
     
+    # for u in q.all():
+    #     print(u._asdict(), " ---------")
+    #     movie_id = u._asdict().get('id')
+    #     print(movie_id)
+    #     movie_genre = MovieGenre.query.filter_by(movie_id=movie_id).first()
+    #     genres = movie_genre.genres
+    #     print(genres, " ---------------",type(genres))
+
+
     results = [u._asdict() for u in q.all()]
     print("==resultset==",results)
 
-    if not results:
-        print("111111")
+    if not results:        
         flash('No results found!', 'success')
         return redirect('/')
-    else:
-        print("111111222222")
+    else:        
         # display results
         flash('Results found!', 'success')
         return render_template('results.html', results=results)
-
-# try:
-#     movie_name = request.values.get('movie_name')
-#     director_name = request.values.get('director_name')
-#     from_imdb_score=request.values.get('from_imdb_score')
-#     to_imdb_score=request.values.get('to_imdb_score')
-#     from_popularity = request.values.get('from_popularity')
-#     to_popularity = request.values.get('from_popularity')
-#     movie_id = request.values.get('movie_id')
-#     genre = request.values.get('genre')
-#     search_text = request.values.get('search_text')
-#     #this is also be search functionality
-#     q = db.session.query(Movie.movie_name,Movie.director_name,Movie.imdb_score,Movie.popularity.label('99popularity'),
-#         )            
-
-#     if movie_name:
-#         q = q.filter(Movie.movie_name.like(movie_name))
-#     if movie_id:
-#         q = q.filter(Movie.id ==movie_id)
-#     if director_name:
-#         q = q.filter(Movie.director_name.like(director_name))
-#     if from_imdb_score:
-#         q = q.filter(Movie.imdb_score <= from_imdb_score)
-#     if to_imdb_score:
-#         q = q.filter(Movie.imdb_score >= to_imdb_score)
-#     if from_popularity:
-#         q = q.filter(Movie.popularity <= from_popularity)
-#     if to_popularity:
-#         q = q.filter(Movie.popularity >= to_popularity)
-#     if search_text:
-#         search_text = ('%' + search_text + '%').lower()
-#         q = q.filter(or_(func.lower(Movie.name).like(search_text),
-#                          func.lower(Movie.director_name).like(search_text)))
-#     result_set = [u._asdict() for u in q.all()]
-#     print("==resultset==",result_set)
-#     return create_response_format(msg="Movie List",data=result_set, is_valid=True,status=200)
-# except Exception as e:
-#     print_exception(e)
-#     print("==Something went wrong in getting all detials for Movie==",str(e))
-#     return create_response_format(msg='CANNOT_FETCH_DATA_FOR_MOVIE')
-
 
 def save_changes(movie, form, new=False):
     """
@@ -98,8 +61,8 @@ def save_changes(movie, form, new=False):
     # Get data from form and assign it to the correct attributes
     # of the SQLAlchemy table object
     
-    movie.movie_name = form.movie_name.data
-    movie.director_name = form.director_name.data
+    movie.movie_name = form.movie_name.data.capitalize()
+    movie.director_name = form.director_name.data.capitalize()
     movie.imdb_score = form.imdb_score.data
     movie.popularity = form.popularity.data
     movie.status = 'A'

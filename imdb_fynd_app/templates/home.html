@@ -1,22 +1,19 @@
 {% extends "layout.html" %}
-{% block content %}
-    <article class="media content-section">
-          <h4>{{description}}</h4>
-          <!-- <h4>{{description}}</h4> -->
-    </article>
-
-    <div class="content-section">
-	   {% from "_formhelpers.html" import render_field %}
-	   <form method="post">
-	      <dl>
-	         {{ render_field(form.select) }}
-	         <p>
-	            {{ render_field(form.search) }}
-	         </p>
-	      </dl>
-	      <p><input type="submit" value="Search">
-	      </p>
-	   </form>
-	</div>
+{% block content %}    
+    <div class="inleft">
+        
+       {% from "_formhelpers.html" import render_field %}
+       <form method="post" class="inline_class">
+          <div style="display: inline">
+            {{ render_field(form.select,cls="inline_class") }}
+          </div>    
+        <div class="inline_class">
+            {{ render_field(form.search,cls="inline_class", placeholder='Search By Name...') }}
+        </div>
+        <div class="inline_class">
+          <button type="submit" class="btn-xs btn-warning"><i class="fas fa-search fa-xl"></i></button>
+        </div>
+       </form>
+    </div>
 
 {% endblock content %}

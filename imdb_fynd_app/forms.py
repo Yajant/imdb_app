@@ -105,9 +105,11 @@ class MovieForm(FlaskForm):
     submit = SubmitField('Submit',id="SubmitMovie")
 
 class MovieSearchForm(FlaskForm):
-    choices = [('Artist', 'artist'),
-               ('Album', 'album'),
-               ('Publisher', 'paublisher')]
-    select = SelectField('Search for movie:', choices=choices)
+    choices = [('movie_name', 'Movie Name'),
+               ('director_name', 'Director Name'),
+               ('popularity', 'Popularity'),
+               ('imdb_score', 'IMDB Score')]
+    # select = SelectField('Search for movie', choices=choices)
+    select = SelectField(choices=choices)
     search = StringField('')
 

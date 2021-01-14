@@ -88,24 +88,49 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 
-/*GIF*/
-div#loading{
-    width: 350px;
-    height: 350px;
-    display: none;
-    background: url(/static/loadingimage.gif) no-repeat;    
-    cursor: wait;
-    /*center the div*/    
-    position: absolute;
-    top:0;
-    bottom: 0;
-    left: 0;
-    right: 0;      
-    margin: auto;
-    margin-top: 40px;
-    }
+/*-----------*/
+.inline_class {
+  display: inline-block;
+}
+label{
+  display:inline;
+  
+}
 
-div#loading_msg {
-  display: none;
+#search {
+    background-clip: padding-box;
+    display: block;
+    padding: -0.625rem 3.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    /* width: 100%; */
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+select{
+  display:inline;
+  background-clip: padding-box;
+  height: 28px;
+
+}
+dd {
+  display:inline-block;
+}
+
+.inleft{
   text-align: center;
+}
+
+
+h5{
+  color:black;
+}
+
+}
+
 }

@@ -114,9 +114,8 @@ class Movie(db.Model):
     popularity = Column(Float,name='99popularity')
     created_date = Column(DateTime, nullable=False, default=datetime.now())
     updated_date = Column(DateTime, nullable=False, default=datetime.now())  
-
     status = Column(String(1), default='A')
-    
+        
 
 class Genre(db.Model):
     __tablename__ = 'genre'
@@ -137,3 +136,5 @@ class MovieGenre(db.Model):
     created_date = Column(DateTime, nullable=False, default=datetime.now())
     updated_date = Column(DateTime, nullable=False, default=datetime.now())    
     status = Column(String(1), default='A')
+    genres = db.relationship('Genre', backref='genres', lazy=True)
+    movies = db.relationship('Movie', backref='movies', lazy=True)

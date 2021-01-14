@@ -1,7 +1,7 @@
 from functools import wraps
 from helpers import create_response_format
 from imdb_fynd_app.models import User
-from flask import request, g, session
+from flask import request, g, session, redirect
 import logging
 import os
 import datetime
@@ -91,3 +91,20 @@ def is_superuser(f):
         else:
             return create_response_format(msg="Provide a valid auth token.", status=401)                
     return decorator
+
+
+def admin_login_required(f):
+    def wrap(*args, **kwargs):
+        # print(g.__dict__)
+        # print(session)
+        if session.get('_user_id'):
+            user_id = session.get('_user_id')
+            user = User.query.get(user_id)
+            # user is available from @login_required
+            if not user.is_superuser:
+                return create_response_format(msg="You do not have permission to view that page", status=401) 
+        else:
+            return create_response_format(msg="You do not have permission to view that page", status=401) 
+        # finally call f. f() now haves access to g.user
+        return f(*args, **kwargs)
+    return wrap

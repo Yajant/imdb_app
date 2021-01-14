@@ -109,10 +109,12 @@ class Movie(db.Model):
     id = Column(Integer, primary_key=True)
     movie_name = Column(String(100))
     director_name = Column(String(50))
+    # tags = Column(Text())
     imdb_score = Column(Float)
     popularity = Column(Float,name='99popularity')
     created_date = Column(DateTime, nullable=False, default=datetime.now())
-    updated_date = Column(DateTime, nullable=False, default=datetime.now())    
+    updated_date = Column(DateTime, nullable=False, default=datetime.now())  
+
     status = Column(String(1), default='A')
     
 

@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 class BaseView(Resource):
     uri = None
+    endpoint = None
 
     def __init__(self):
         self.request_data = {}

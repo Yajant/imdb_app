@@ -3,20 +3,183 @@ import json
 import hashlib
 import datetime
 from sqlalchemy import func
-from flask import Blueprint, render_template, request, redirect, url_for, g
+from flask import Blueprint, render_template, request, redirect, url_for, g, flash
 
 from imdb_fynd_app.extensions import db
 from imdb_fynd_app.models import User, Genre,MovieGenre,Movie
 
-from imdb_fynd_app.core.imdb_decorator import token_required , is_superuser
+from imdb_fynd_app import app
+from imdb_fynd_app.core.imdb_decorator import token_required , is_superuser, admin_login_required
 from helpers import create_response_format, print_exception
 from imdb_fynd_app.core.views import BaseView
 from imdb_fynd_app.core.http import request_data, parse_args
+from imdb_fynd_app.forms import MovieForm, MovieSearchForm
+from flask_login import current_user, login_required
 
-# ------------
-# MOVIES
-# -----------
+# -------------------
+# MOVIES FLASK VIEW
+# -------------------
 
+@app.route('/results')
+def search_results(search):    
+    results = []
+
+    print(search.data," - search.data")
+    search_text = search.data['search']
+    #this is also be search functionality
+    q = db.session.query(Movie.movie_name,Movie.director_name,Movie.imdb_score,Movie.popularity.label('99popularity'),
+        ) 
+    if search_text == '':
+        #If nothing searched display all results
+        q = q
+    else:
+        search_text = ('%' + search_text + '%').lower()
+        q = q.filter(db.or_(func.lower(Movie.movie_name).like(search_text),
+                             func.lower(Movie.director_name).like(search_text)))
+    
+    results = [u._asdict() for u in q.all()]
+    print("==resultset==",results)
+
+    if not results:
+        print("111111")
+        flash('No results found!', 'success')
+        return redirect('/')
+    else:
+        print("111111222222")
+        # display results
+        flash('Results found!', 'success')
+        return render_template('results.html', results=results)
+
+# try:
+#     movie_name = request.values.get('movie_name')
+#     director_name = request.values.get('director_name')
+#     from_imdb_score=request.values.get('from_imdb_score')
+#     to_imdb_score=request.values.get('to_imdb_score')
+#     from_popularity = request.values.get('from_popularity')
+#     to_popularity = request.values.get('from_popularity')
+#     movie_id = request.values.get('movie_id')
+#     genre = request.values.get('genre')
+#     search_text = request.values.get('search_text')
+#     #this is also be search functionality
+#     q = db.session.query(Movie.movie_name,Movie.director_name,Movie.imdb_score,Movie.popularity.label('99popularity'),
+#         )            
+
+#     if movie_name:
+#         q = q.filter(Movie.movie_name.like(movie_name))
+#     if movie_id:
+#         q = q.filter(Movie.id ==movie_id)
+#     if director_name:
+#         q = q.filter(Movie.director_name.like(director_name))
+#     if from_imdb_score:
+#         q = q.filter(Movie.imdb_score <= from_imdb_score)
+#     if to_imdb_score:
+#         q = q.filter(Movie.imdb_score >= to_imdb_score)
+#     if from_popularity:
+#         q = q.filter(Movie.popularity <= from_popularity)
+#     if to_popularity:
+#         q = q.filter(Movie.popularity >= to_popularity)
+#     if search_text:
+#         search_text = ('%' + search_text + '%').lower()
+#         q = q.filter(or_(func.lower(Movie.name).like(search_text),
+#                          func.lower(Movie.director_name).like(search_text)))
+#     result_set = [u._asdict() for u in q.all()]
+#     print("==resultset==",result_set)
+#     return create_response_format(msg="Movie List",data=result_set, is_valid=True,status=200)
+# except Exception as e:
+#     print_exception(e)
+#     print("==Something went wrong in getting all detials for Movie==",str(e))
+#     return create_response_format(msg='CANNOT_FETCH_DATA_FOR_MOVIE')
+
+
+def save_changes(movie, form, new=False):
+    """
+    Save the changes to the database
+    """
+    # Get data from form and assign it to the correct attributes
+    # of the SQLAlchemy table object
+    
+    movie.movie_name = form.movie_name.data
+    movie.director_name = form.director_name.data
+    movie.imdb_score = form.imdb_score.data
+    movie.popularity = form.popularity.data
+    movie.status = 'A'
+    
+    if new:
+        # Add the new movie to the database
+        db.session.add(movie)
+    # commit the data to the database
+    db.session.commit()
+
+
+    tags = form.genre.data    
+
+    for genre_name in tags:
+        genre = Genre.query.filter_by(genre_name=genre_name.capitalize()).first()
+        if not genre:
+            genre = Genre(genre_name=genre_name.capitalize(),status='A')
+            db.session.add(genre)   
+            # commit the data to the database
+            db.session.commit()
+
+        movie_genre = MovieGenre()
+        movie_genre.genre_id = genre.id
+        movie_genre.movie_id = movie.id
+        movie_genre.status = 'A'
+        db.session.add(movie_genre)   
+            
+        # commit the data to the database
+        db.session.commit()
+
+
+
+@login_required
+@admin_login_required
+@app.route('/movies_view',methods=['GET', 'POST','PUT','DELETE'])
+def movies_view():
+    try:
+        # call the service for the authenitcation        
+        form = MovieForm()
+        if form.validate_on_submit():
+
+            movie_name = request.values.get('movie_name')
+            if not movie_name:
+                return create_response_format(msg='PLS_PROVIDE_MOVIE_NAME')
+            director_name = request.values.get('director_name')
+            if not director_name:
+                return create_response_format(msg='PLS_PROVIDE_DIRECTOR_NAME')
+            imdb_score=request.values.get('imdb_score')
+            if not imdb_score:
+                return create_response_format(msg='PLS_PROVIDE_imdb_score')
+            popularity = request.values.get('popularity')
+            if not popularity:
+                return create_response_format(msg='PLS_PROVIDE_POPULARITY_FOR_MOVIE')
+
+            # movie_exists = Movie.query.filter_by(movie_name=movie_name,director_name=director_name).first()
+            # if movie_exists:                
+            #     return create_response_format(msg="Movie with same director already exist",status=409)
+            
+            movie = Movie()                    
+            save_changes(movie, form, new=True)
+            
+            # q = Movie(movie_name=movie_name,director_name=director_name,imdb_score=imdb_score,
+            #     popularity =popularity,
+            #     status='A'
+            #             )
+            # db.session.add(q)
+            # db.session.commit()
+
+            flash('Movie Inserted Successfully!', 'success')
+            return redirect(url_for('movies_view'))                    
+        return render_template('movie.html', title='Movie', form=form)
+    
+    except Exception as e:
+        print_exception(e)
+        print("==Something went wrong==",str(e))
+        return create_response_format(msg='CANNOT_CREATE_MOVIE_CHECK_LOG')
+      
+# -------------------------------
+# MOVIES FLASK RESTFUL API VIEW
+# -------------------------------
 class MoviesAPI(BaseView): 
 
     uri = '/movies'

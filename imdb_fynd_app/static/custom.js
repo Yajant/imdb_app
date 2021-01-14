@@ -1,5 +1,7 @@
 $(document).ready(function(e) {
 
+	// ----------
+	// ----------
     var flashMessage = function(data) {
         html = '';
         if (data.type) {
@@ -11,98 +13,77 @@ $(document).ready(function(e) {
         html += '<div class="alert alert-' + msg_category + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + data.message + '</div>';
         return html;
     };
+    
 
-    $("#uploadfile").click(function() {
+	// ----------
+	// ----------    
+	// var clicked;
+	// $(".favorite").click(function(){
+	// clicked = $(this).attr("name");
 
-        var ins = document.getElementById('the-file').files.length;
+	// $.ajax({
+	// 	  type : 'POST',
+	// 	  url : "{{url_for('test')}}",
+	// 	  contentType: 'application/json;charset=UTF-8',
+	// 	  data : {'data':clicked}
+	// 	});
+	
+	// });	
 
-        if (ins == 0) {
-            $('#flash').append(flashMessage({
-                'message': 'Select at least one file',
-                'type': 'danger'
-            }));
-            return;
-        }
+    // ----------
+	// ----------
+	// $('button').click(function(){
+	// $('form').on('submit', function(event) {
+	// 	var email = $('#email').val();
+	// 	var pass = $('#password').val();
 
-        var fileInput = document.getElementById('the-file');
-        var file = fileInput.files[0];
-        var form_data = new FormData();
-        form_data.append('file', file);
+	// 	$.ajax({
+	// 		// url: "/api/user/register",
+	// 		url: "/register_enduser",
+	// 		data: $('form').serialize(),
+	// 		type: 'POST',
+	// 		success: function(response){
+	// 			console.log(response);
+	// 			// window.location.href = "/register_enduser";
+	// 			// event.preventDefault();
+	// 			window.location.reload();
+	// 		},
+	// 		error: function(error){
+				
+	// 		}
+	// 	});
 
-        $.ajax({
-            url: '/upload_file/', // point to server-side URL
-            dataType: 'json', // what to expect back from server
-            cache: false,
-            contentType: false,
-            processData: false,
-            data: form_data,
-            type: 'post',
-            success: function(response) { // display success response				
-                // no need to parse the flask obj, as we are already sending pared data from jsonify
-                // var response = JSON.parse(response) 				
-                if (response.status) {
-                    // If scrapper started show GIF loader and hide file upload content
-                    $("#loading").show();
-                    $("#loading_msg").show();
-                    $("#loading_msg").css("display", "block");
-                    $("#content").hide();
+	// ----------
+	// ----------		
+	// $("#SubmitMovie").click(function (event) {    		    	          			
+	// 	var form = $('#movie_form');
+	// 	var formData = new FormData(document.getElementById(form));
 
-                    // Ajax view to check every X seconds if task is completed, the result of this view will determine if it should redirect or still wait for the download link.		        			        
-                    $.ajax({
-                        url: "/status/" + response.task_id + "/",
-                        success: function(data) {
-                            if ((data.state == 'SUCCESS') && (data.status == true)) {
+	// 	$.ajax({
+	// 		url: '/movies', // point to server-side URL
+	// 		dataType: 'json', // what to expect back from server
+	// 		cache: false,
+	// 		contentType: false,
+	// 		processData: false,
+	// 		data: formData,
+	// 		type: 'post',
+	// 		success: function (response) { // display success response				
+	// 			// no need to parse the flask obj, as we are already sending pared data from jsonify
+	// 			// var response = JSON.parse(response) 				
+	// 			if (response.is_valid)
+	// 			{										
+	// 			console.log(response);
+	// 			// window.location.href = "/movies";
+	// 			}
+	// 			else{					
+	// 				$('#flash').append(flashMessage(response));
+	// 				return;
+	// 			}	
+	// 		}, //end success function				
+	// 	}); //end ajax call
+	// 	return false;
 
-                                console.log("SUCCESS@@@@@@@@@@@@@@@@@@@");
-                                // If task complete render the download link view
-
-                                $.ajax({
-                                    url: "/render_download_link/",
-                                    type: 'GET',
-                                    success: function(data) {
-
-                                        $("#loading").hide();
-                                        $("#loading_msg").hide();
-                                        $("#loading_msg").css("display", "none");
-                                        $("#content").hide();
-
-                                        console.log("Rendered download link");
-                                        $('#download_link').html(data);
-                                    },
-                                });
-                            } else {
-
-                                $("#loading").hide();
-                                $("#loading_msg").hide();
-                                $("#loading_msg").css("display", "none");
-                                // If there are some erros in scraper we display the message
-                                console.log("pending-----------------------");
-                                $('#flash').append(flashMessage(data));
-                                return;
-                            }
-                        }, //end success 
-                    }); //end ajax
-
-                } else {
-                    $('#flash').append(flashMessage(response));
-                    return;
-                }
-            }, //end success function				
-        }); //end ajax call
-        return false;
-
-    }); //close jquery #uploadfilefunction
-
-
-    // $.ajax({
-    // 	type: "post",
-    //     url: '/upload_file',
-    //     success: function(data) {
-    //         console.log('get info');
-    //         console.log(JSON.stringify(data, null, '   '));
-    //         // $('#info').html(JSON.stringify(data, null, '   '));
-    //         // $('#description').html(data['description']);
-    //     }
-    // });
+	// }); //close jquery #uploadfilefunction	
+		
 
 }); //end jquery

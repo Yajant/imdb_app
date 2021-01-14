@@ -1,8 +1,10 @@
 import os, logging
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, session, g
 from .commands import create_tables, create_superuser
 from .extensions import db, login_manager
 from flask_cors import CORS
+from imdb_fynd_app.models import User
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__,static_folder='static',template_folder='templates')
 
@@ -13,6 +15,17 @@ app.config.from_pyfile('settings.py')
 # Initialize sqllachemy/ register sqlalchemy extension in application
 db.init_app(app)
 
+Bootstrap(app)
+
+# Add current_user in jinja template and Initialize login manager
+login_manager.init_app(app)    
+login_manager.login_view = 'login_enduser'
+login_manager.login_message_category = 'info'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    
 # Register cli command to create all tables
 # Usage - flask run - flask create_tables
 app.cli.add_command(create_tables)
@@ -27,7 +40,7 @@ app.cli.add_command(create_superuser)
 # ---------------------
 from imdb_fynd_app.errors.handlers import error_403, error_404, error_405, error_500
 app.register_error_handler(403, error_403)
-app.register_error_handler(404, error_404)
+# app.register_error_handler(404, error_404)
 app.register_error_handler(405, error_405)
 app.register_error_handler(500, error_500)
 
@@ -74,11 +87,14 @@ print("\n\n\n\n\n    PROCESS STARTED.-({0})   \n\n\n\n\n".format(script_run_at))
 print("\n\n\n======================================================================================\n\n\n")
 
 from helpers import create_response_format
-@app.route('/welcome', methods=['GET'])
-@app.route('/')
-def welcome():
-    msg = "Let's Begin"
-    return create_response_format(msg=msg,status=200,is_valid=True)
+from flask import render_template, request
+
+# @app.route('/welcome', methods=['GET'])
+# @app.route('/')
+# def welcome():
+    # msg = "Let's Begin"
+    # return render_template('home.html', description='Created RESTful API for movies using flask-restful (something similar to IMDB).',title='Fynd')
+    # return create_response_format(msg=msg,status=200,is_valid=True)
 
 from imdb_fynd_app.routes.auth import RegisterAPI, LoginAPI, LogoutAPI
 from imdb_fynd_app.routes.movies import MoviesAPI
@@ -95,5 +111,8 @@ resources = [
 ]
 
 for resource in resources:
+    # If an endpoint isn't given then Flask-RESTful generates one for you from the class name, 
+    # but since sometimes the endpoint is needed for functions such as url_for lets make it explicit.
     api.add_resource(resource, resource.uri)
+    # api.add_resource(resource, resource.uri, endpoint=resource.endpoint)
 

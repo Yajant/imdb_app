@@ -40,7 +40,7 @@ class TestUser(BaseTestCase):
         
         json_response = self.register_user("joe@gmail.com",'as',400)                
         self.assertEqual(False, json_response['is_valid']) 
-        self.assertEqual('PASSWORD_SHOULD_BE_BETWEEN_LENGTH_3_TO_25' , json_response['message'])
+        self.assertEqual('PASSWORD_SHOULD_BE_BETWEEN_LENGTH_3_TO_20' , json_response['message'])
         
     def test_registered_user_login(self):
         """ Test for login of registered-user login """        

@@ -1,4 +1,4 @@
-import json
+import json, time
 import logging
 import unittest
 from urllib.parse import urlencode
@@ -12,17 +12,13 @@ from imdb_fynd_app.routes.genre import GenreAPI, GenreMovieAPI
 log = logging.getLogger(__name__)
 
 class BaseTestCase(unittest.TestCase):
-    def tearDown(self):            
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
-
+    
     def setUp(self,create_superuser=False):
         # """Define test variables and initialize app."""
         self.client = app.test_client()
-        self.app = app
+        self.app = app        
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///IMDB_TEST.sqlite3"
+        db.init_app(self.app)
             
         # bind app context without Context Manager.
         ctx = self.app.app_context()
@@ -32,12 +28,21 @@ class BaseTestCase(unittest.TestCase):
             # after this you can use current_app
             ctx.push()
         
-        if create_superuser:            
-            super_user = User(username='admin',email='admin@mailinator.com', password='admin', is_superuser=True,is_active=True)  
-            db.session.add(super_user)
-            db.session.commit()
-            data_login = self.login_user("admin@mailinator.com","admin",200)   
+        if create_superuser:   
+            new_user = User.query.filter_by(email='bob@mailinator.com').one_or_none()
+            if not new_user:              
+                super_user = User(username='bob',email='bob@mailinator.com', password='admin', is_superuser=True,is_active=True)  
+                db.session.add(super_user)
+                db.session.commit()            
+            data_login = self.login_user("bob@mailinator.com","admin",200)   
             self.data_login = data_login
+
+    def tearDown(self):            
+        """teardown all initialized variables."""        
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
         
     def http_send(self, uri, method, code, request_data=None, headers=None, **kwargs):
         if api.prefix:

@@ -1,4 +1,3 @@
-
 from wtforms.fields import StringField
 
 

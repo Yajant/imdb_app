@@ -14,7 +14,6 @@ app.config.from_pyfile('settings.py')
 
 # Initialize sqllachemy/ register sqlalchemy extension in application
 db.init_app(app)
-
 Bootstrap(app)
 
 # Add current_user in jinja template and Initialize login manager

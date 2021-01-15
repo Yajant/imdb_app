@@ -15,6 +15,7 @@ class TestMovie(BaseTestCase):
         super().setUp(create_superuser=True)
 
     def test_view_post(self):                    
+        time.sleep(1)  
         json_response = self.add_movie()
             
         self.assertTrue(True, type(json_response['is_valid']))     

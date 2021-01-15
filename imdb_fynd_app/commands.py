@@ -21,6 +21,9 @@ def create_superuser(username,email,password):
         # or
         # flask create_superuser
 
+        # new_user = User.query.filter_by(email=email).one_or_none()
+        # if not new_user:               
+        
         db.create_all()
         # Only needed on first execution to create first user       
         super_user = User(username=username,email=email, password=password, is_superuser=True, is_active=True) 

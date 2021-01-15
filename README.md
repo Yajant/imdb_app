@@ -1,5 +1,9 @@
 ### Created RESTful API for movies using flask-restful (something similar to IMDB).
 
+### The application is hosted on heroku, you can check the live version here
+https://imdb-fynd-yaj.herokuapp.com/
+
+
 ### There are 2 levels of access:
 - All routes are secured with JWT Token authentication
 - admin = who can add, remove or edit movies.

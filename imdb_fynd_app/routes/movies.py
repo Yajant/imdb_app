@@ -93,8 +93,6 @@ def save_changes(movie, form, new=False):
         # commit the data to the database
         db.session.commit()
 
-
-
 @login_required
 @admin_login_required
 @app.route('/movies_view',methods=['GET', 'POST','PUT','DELETE'])

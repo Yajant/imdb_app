@@ -19,6 +19,11 @@ from flask.views import MethodView
 
 logger = logging.getLogger(__name__)
 
+
+# -------------------
+# AUTH FLASK VIEW
+# -------------------
+
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
 def home():
@@ -108,6 +113,10 @@ def account():
                                image_file=image_file, form=form)
     except Exception as e:
         print_exception(e)
+
+# -------------------------------
+# AUTH FLASK RESTFUL API VIEW
+# -------------------------------
 
 class RegisterAPI(BaseView): 
 

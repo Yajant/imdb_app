@@ -34,15 +34,6 @@ def search_results(search):
         search_text = ('%' + search_text + '%').lower()
         q = q.filter(db.or_(func.lower(Movie.movie_name).like(search_text),func.lower(Movie.director_name).like(search_text)))
     
-    # for u in q.all():
-    #     print(u._asdict(), " ---------")
-    #     movie_id = u._asdict().get('id')
-    #     print(movie_id)
-    #     movie_genre = MovieGenre.query.filter_by(movie_id=movie_id).first()
-    #     genres = movie_genre.genres
-    #     print(genres, " ---------------",type(genres))
-
-
     results = [u._asdict() for u in q.all()]
     print("==resultset==",results)
 
@@ -121,14 +112,7 @@ def movies_view():
             
             movie = Movie()                    
             save_changes(movie, form, new=True)
-            
-            # q = Movie(movie_name=movie_name,director_name=director_name,imdb_score=imdb_score,
-            #     popularity =popularity,
-            #     status='A'
-            #             )
-            # db.session.add(q)
-            # db.session.commit()
-
+                        
             flash('Movie Inserted Successfully!', 'success')
             return redirect(url_for('movies_view'))                    
         return render_template('movie.html', title='Movie', form=form)
